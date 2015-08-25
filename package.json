@@ -1,0 +1,44 @@
+{
+  "name": "RiotItemSetChallenege",
+  "version": "1.0.0",
+  "description": "The backend for Riot API challenege #2",
+  "main": "dest/app/server.js",
+  "scripts": {
+    "start": "node dest/server.js",
+    "test": "gulp mocha",
+    "lint": "gulp ts-lint",
+    "compile": "gulp"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "author": "Brandon Krueger <Brandon.C.Krueger@gmail.com>",
+  "license": "MIT",
+  "homepage": "",
+  "dependencies": {
+    "bcrypt": "^0.8.5",
+    "bluebird": "^2.9.34",
+    "hapi": "^8.8.0",
+    "hapi-auth-cookie": "^3.1.0",
+    "joi": "^6.6.1",
+    "mongodb": "^2.0.39",
+    "request": "^2.60.0"
+  },
+  "devDependencies": {
+    "chai": "^3.2.0",
+    "del": "^1.2.0",
+    "gulp": "^3.9.0",
+    "gulp-debug": "^2.0.1",
+    "gulp-file": "^0.2.0",
+    "gulp-inject": "^1.5.0",
+    "gulp-mocha": "^2.1.3",
+    "gulp-nodemon": "^2.0.3",
+    "gulp-shell": "^0.4.2",
+    "gulp-tsd": "^0.0.4",
+    "gulp-tslint": "^3.1.1-beta",
+    "mocha": "^2.2.5",
+    "sinon": "^1.15.4",
+    "tsd": "^0.6.3"
+  }
+}
