@@ -6,7 +6,7 @@ var chai = require('chai'),
 	should = chai.should();
 
 // Module to be tested
-var baseRoutes = require('../../dest/routes/account.routes');
+var baseRoutes = require('../../dest/routes/user.routes');
 	
 describe('routes.account', function() {
 	

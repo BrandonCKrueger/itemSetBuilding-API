@@ -7,7 +7,7 @@ var chai = require('chai'),
 	sinon = require('sinon');
 	
 // Modules to be mocked
-var accountRoutes = require('../../dest/routes/account.routes');
+var accountRoutes = require('../../dest/routes/user.routes');
 
 // Module to be tested
 var serverRoutes = require('../../dest/routes/ServerRoutes');

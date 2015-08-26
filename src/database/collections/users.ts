@@ -4,8 +4,10 @@ import dbConnection = require('../dbConnection');
 let Bcrypt: any = require('bcrypt');
 
 export class User {
+	_id: string;
 	email: string;
 	password: string;
+	username: string;
 }
 
 export function getMethods(): Object {

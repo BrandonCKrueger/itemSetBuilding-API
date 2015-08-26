@@ -81,8 +81,13 @@ function loginHandler(request: Hapi.Request, reply: Hapi.IReply): void {
         };
 
         db.users.validate(user).then(function(response: UserCollection.User): void {
-            request.auth.session.set(response);
-            reply(response);
+            let user: any = {
+                id: response._id,
+                username: response.username,
+                email: response.email
+            };
+            request.auth.session.set(user);
+            reply(user);
         }).catch(function(error: any): void {
             reply(error);
         });

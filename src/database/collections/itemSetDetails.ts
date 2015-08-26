@@ -6,7 +6,9 @@ import Mongo = require('mongodb');
 
 export function getMethods(): Object {
 	let collectionMethods: Object = {
-		getItemSetDetails: getItemSetDetails
+		getItemSetDetails: getItemSetDetails,
+		insertItemSetData: insertItemSetData,
+		updateItemSetData: updateItemSetData
 	};
 	return collectionMethods;
 }
@@ -28,6 +30,53 @@ function getItemSetDetails(queryOptions: IItemSetDetails.IQueryOptions): any {
 					}
 				});
 			}
+		}).catch(function(error: any): void {
+			reject(error);
+		});
+    });
+}
+
+function insertItemSetData(itemSetData: IItemSetDetails.IItemSetData): any {
+	return new Promise(function(resolve: any, reject: any): any {
+        dbConnection.getConnection().then(function(db: any): void {
+			db.itemSetDetails.insert(itemSetData, function(insertError: any, record: IItemSetDetails.IItemSetData): void {
+				if (insertError) {
+					reject(insertError);
+				} else {
+					resolve(record);
+				}
+			});
+		}).catch(function(error: any): void {
+			reject(error);
+		});
+    });
+}
+
+function updateItemSetData(buildId: string, itemSetDetails: IItemSetDetails.IItemSetDetails, userId: string): any {
+	return new Promise(function(resolve: any, reject: any): any {
+        dbConnection.getConnection().then(function(db: any): void {
+			db.itemSetDetails.findOne({'_id': new Mongo.ObjectID(buildId)}).then(function(result: IItemSetDetails.IItemSetData): void {
+				if (!result) {
+					reject('No builds found');
+				} else {
+					if (result.who && result.who.createdBy && result.who.createdBy.userId === userId) {
+						result.itemSetDetails = itemSetDetails;
+						result.who.lastEdit = new Date();
+
+						db.itemSetDetails.save(result, {w: 1}, function(updateError: any, record: IItemSetDetails.IItemSetData): void {
+							if (updateError) {
+								reject(updateError);
+							} else {
+								resolve(record);
+							}
+						});
+					} else {
+						reject('Do are not the owner of this item build');
+					}
+				}
+			}).catch(function(error: any): void {
+				reject(error);
+			});
 		}).catch(function(error: any): void {
 			reject(error);
 		});

@@ -23,11 +23,10 @@ export interface IItemSetDataWho {
 	lastEdit: Date;
 	createdDate: Date;
 	createdBy: {
-		userId: number;
+		userId: string;
 		user: string;
 	};
 	public: boolean;
-	editable: boolean;
 }
 
 export interface IItemSetDetails  {
