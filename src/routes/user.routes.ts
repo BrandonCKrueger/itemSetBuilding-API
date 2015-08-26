@@ -17,7 +17,8 @@ export function getRoutes(): Hapi.IRouteConfiguration[] {
                 validate: {
                     payload: {
                         email: Joi.string().email(),
-                        password: Joi.string()
+                        password: Joi.string(),
+                        username: Joi.string()
                     }
                 }
             }
@@ -60,38 +61,50 @@ export function getRoutes(): Hapi.IRouteConfiguration[] {
 function registerHandler(request: Hapi.Request, reply: Hapi.IReply): void {
     let user: any = {
         email: request.payload.email,
-        password: request.payload.password
+        password: request.payload.password,
+        username: request.payload.username
     };
 
     db.users.register(user).then(function(response: UserCollection.User): void {
-        reply(response);
+        let user: any = {
+            id: response._id,
+            username: response.username,
+            email: response.email
+        };
+        request.auth.session.set(user);
+        reply(user);
     }).catch(function(error: any): void {
         reply(error);
     });
 }
 
 function loginHandler(request: Hapi.Request, reply: Hapi.IReply): void {
+    let user: any = null;
     if (request.auth.isAuthenticated) {
-        reply('Already authenticated');
+        user = {
+            id: request.auth.credentials.id,
+            username: request.auth.credentials.username,
+            email: request.auth.credentials.email
+        };
     } else {
-
-        let user: any = {
+        let userToValidate: any = {
             email: request.payload.email,
             password: request.payload.password
         };
 
-        db.users.validate(user).then(function(response: UserCollection.User): void {
-            let user: any = {
+        db.users.validate(userToValidate).then(function(response: UserCollection.User): void {
+            user = {
                 id: response._id,
                 username: response.username,
                 email: response.email
             };
             request.auth.session.set(user);
-            reply(user);
+
         }).catch(function(error: any): void {
-            reply(error);
+            reply(error).code(500);
         });
     }
+    reply(user);
 }
 
 function logoutHandler(request: Hapi.Request, reply: Hapi.IReply): void {

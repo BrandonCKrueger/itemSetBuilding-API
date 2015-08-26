@@ -148,17 +148,13 @@ function insertItemSetHandler(request: Hapi.Request, reply: Hapi.IReply): void {
 }
 
 function updateItemSetHandler(request: Hapi.Request, reply: Hapi.IReply): void {
-    if (!request.auth.isAuthenticated) {
-        reply('You need to be logged in to save item builds').code(401);
-    } else {
-        let buildId: string = request.params['buildId'];
-        let itemSetDetails: IItemSetDetails.IItemSetDetails = request.payload.itemSetDetails;
-        let user: string = request.auth.credentials.id;
+    let buildId: string = request.params['buildId'];
+    let itemSetDetails: IItemSetDetails.IItemSetDetails = request.payload.itemSetDetails;
+    let user: string = request.auth.credentials.id;
 
-        db.itemSetDetails.updateItemSetData(buildId, itemSetDetails, user).then(function(response: any): void {
-            reply(response);
-        }).catch(function(error: any): void {
-            reply(error);
-        });
-    }
+    db.itemSetDetails.updateItemSetData(buildId, itemSetDetails, user).then(function(response: any): void {
+        reply(response);
+    }).catch(function(error: any): void {
+        reply(error);
+    });
 }
