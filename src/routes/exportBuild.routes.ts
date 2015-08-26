@@ -40,7 +40,7 @@ function exportBuildHandler(request: Hapi.Request, reply: Hapi.IReply): void {
             sortrank: result[0].itemSetDetails.sortrank,
             blocks: result[0].itemSetDetails.blocks
         };
-        // todo: reply(outputData).header('Content-Type','application/json').type('application/json');
+        reply(outputData).header('Content-disposition', 'attachment');
     }).catch(function(error: any): void {
         reply(error);
     });
