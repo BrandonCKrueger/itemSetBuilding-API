@@ -3,6 +3,8 @@ typings/
 node_modules/
 **/*.map
 /**/*.js
+src/server.config.ts
+dest/server.config.js
 
 # exceptions
 !gulpfile.js

@@ -1,8 +1,9 @@
 /// <reference path="../../typings/tsd.d.ts" />
 import mongodb = require('mongodb');
 import Promise = require('bluebird');
+import Configuration = require('../server.config');
 
-let mongoUrl: string = 'mongodb://localhost:27017/itemSetBuilder';
+let mongoUrl: string = Configuration.settings.database.mongoUrl;
 let myDb: any = null;
 
 export function getConnection(): any {
@@ -14,7 +15,8 @@ export function getConnection(): any {
                 } else {
                     myDb = {
                         db: db,
-                        users: db.collection('Users')
+                        users: db.collection('Users'),
+                        itemSetDetails: db.collection('ItemSetDetails')
                     };
                     resolve(myDb);
                 }

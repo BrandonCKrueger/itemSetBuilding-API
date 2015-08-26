@@ -1,10 +1,13 @@
 /// <reference path="../../typings/tsd.d.ts" />
-import userCollection = require('../database/collections/users');
+import UserCollection = require('../database/collections/users');
+import ItemSetDetailsCollection = require('../database/collections/itemSetDetails');
 
 export class Database {
 	public users: any;
+	public itemSetDetails: any;
 
 	constructor() {
-		this.users = userCollection.getMethods();
+		this.users = UserCollection.getMethods();
+		this.itemSetDetails = ItemSetDetailsCollection.getMethods();
 	}
 }

@@ -1,10 +1,12 @@
 /// <reference path="../../typings/tsd.d.ts" />
-import hapi = require('hapi');
-import accountRoutes = require('./account.routes');
+import Hapi = require('hapi');
+import UserRoutes = require('./user.routes');
+import ItemSetDetailsRoutes = require('./itemSetDetails.routes');
 
-export function RegisterRoutes(server: hapi.Server): void {
-	let routes: hapi.IRouteConfiguration[] = [].concat(
-		accountRoutes.getRoutes()
+export function RegisterRoutes(server: Hapi.Server): void {
+	let routes: Hapi.IRouteConfiguration[] = [].concat(
+		UserRoutes.getRoutes(),
+		ItemSetDetailsRoutes.getRoutes()
 	);
 	server.route(routes);
 }

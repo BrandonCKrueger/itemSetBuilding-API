@@ -12,7 +12,7 @@ export function getRoutes(): Hapi.IRouteConfiguration[] {
         {
             method: 'POST',
             path: '/register',
-            handler: register,
+            handler: registerHandler,
             config: {
                 validate: {
                     payload: {
@@ -25,7 +25,7 @@ export function getRoutes(): Hapi.IRouteConfiguration[] {
         {
             method: 'POST',
             path: '/login',
-            handler: login,
+            handler: loginHandler,
             config: {
                 validate: {
                     payload: {
@@ -47,7 +47,7 @@ export function getRoutes(): Hapi.IRouteConfiguration[] {
         {
             method: 'GET',
             path: '/logout',
-            handler: logout,
+            handler: logoutHandler,
             config: {
                 auth: 'session'
             }
@@ -57,7 +57,7 @@ export function getRoutes(): Hapi.IRouteConfiguration[] {
 }
 
 // private functions
-function register(request: Hapi.Request, reply: Hapi.IReply): void {
+function registerHandler(request: Hapi.Request, reply: Hapi.IReply): void {
     let user: any = {
         email: request.payload.email,
         password: request.payload.password
@@ -70,7 +70,7 @@ function register(request: Hapi.Request, reply: Hapi.IReply): void {
     });
 }
 
-function login(request: Hapi.Request, reply: Hapi.IReply): void {
+function loginHandler(request: Hapi.Request, reply: Hapi.IReply): void {
     if (request.auth.isAuthenticated) {
         reply('Already authenticated');
     } else {
@@ -89,7 +89,7 @@ function login(request: Hapi.Request, reply: Hapi.IReply): void {
     }
 }
 
-function logout(request: Hapi.Request, reply: Hapi.IReply): void {
+function logoutHandler(request: Hapi.Request, reply: Hapi.IReply): void {
     request.auth.session.clear();
     reply('Logged out');
 }

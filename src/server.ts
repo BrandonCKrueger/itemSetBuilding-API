@@ -1,6 +1,7 @@
 /// <reference path="../typings/tsd.d.ts" />
 import Hapi = require('hapi');
 import ServerRoutes = require('./routes/ServerRoutes');
+import Configuration = require('./server.config');
 let HapiAuthCookie: any = require('hapi-auth-cookie');
 
 // creating the hapi server instance
@@ -18,12 +19,7 @@ server.connection({
 
 // enable hapi-auth-cookie
 server.register(HapiAuthCookie, function(error: any): void {
-  server.auth.strategy('session', 'cookie', false, {
-    password: 'secret',
-    cookie: 'sid-example',
-    redirectTo: '/login',
-    isSecure: false
-  });
+  server.auth.strategy('session', 'cookie', false, Configuration.settings.cookie);
 });
 
 // defining our routes
