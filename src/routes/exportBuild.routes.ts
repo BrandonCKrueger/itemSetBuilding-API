@@ -18,6 +18,15 @@ export function getRoutes(): Hapi.IRouteConfiguration[] {
                     params: {
                         buildId: Joi.string()
                     }
+                },
+                auth: {
+                    mode: 'try',
+                    strategy: 'session'
+                },
+                plugins: {
+                    'hapi-auth-cookie': {
+                        redirectTo: false
+                    }
                 }
             }
         }

@@ -52,6 +52,22 @@ export function getRoutes(): Hapi.IRouteConfiguration[] {
             config: {
                 auth: 'session'
             }
+        },
+        {
+            method: 'GET',
+            path: '/getCredentials',
+            handler: getCredentialsHandler,
+            config: {
+                auth: {
+                    mode: 'try',
+                    strategy: 'session'
+                },
+                plugins: {
+                    'hapi-auth-cookie': {
+                        redirectTo: false
+                    }
+                }
+            }
         }
     ];
     return routes;
@@ -86,6 +102,7 @@ function loginHandler(request: Hapi.Request, reply: Hapi.IReply): void {
             username: request.auth.credentials.username,
             email: request.auth.credentials.email
         };
+        reply(user);
     } else {
         let userToValidate: any = {
             email: request.payload.email,
@@ -99,15 +116,18 @@ function loginHandler(request: Hapi.Request, reply: Hapi.IReply): void {
                 email: response.email
             };
             request.auth.session.set(user);
-
+            reply(user);
         }).catch(function(error: any): void {
             reply(error).code(500);
         });
     }
-    reply(user);
 }
 
 function logoutHandler(request: Hapi.Request, reply: Hapi.IReply): void {
     request.auth.session.clear();
     reply('Logged out');
+}
+
+function getCredentialsHandler(request: Hapi.Request, reply: Hapi.IReply): void {
+    reply(request.auth.credentials);
 }

@@ -13,7 +13,9 @@ server.connection({
   host: 'localhost',
   labels: ['web'],
   routes: {
-    cors: true
+    cors: {
+      credentials: true
+    }
   }
 });
 

@@ -1,17 +1,22 @@
 /// <reference path="../../../typings/tsd.d.ts" />
 
 export interface IQueryOptions {
-	itemSetId?: string;
-	championId?: number;
-	isPublic?: boolean;
-	userId?: number;
-	userName?: string;
+	limit?: number;
+	skip?: number;
+	sort?: {
+		key?: string;
+		direction?: string;
+	};
 }
 
 export interface IItemSetData {
 	itemSetDetails: IItemSetDetails;
 	who: IItemSetDataWho;
 	champion: IItemSetDataChampion;
+	averageRating?: number;
+	ratings?: IItemSetDataSocialRatings[];
+	commentCount?: number;
+	comments?: IItemSetDataSocialComments[];
 }
 
 export interface IItemSetDataChampion {
@@ -27,6 +32,17 @@ export interface IItemSetDataWho {
 		user: string;
 	};
 	public: boolean;
+}
+
+export interface IItemSetDataSocialComments {
+	user: string;
+	createdDate: Date;
+	comment: string;
+}
+
+export interface IItemSetDataSocialRatings {
+	user: string;
+	rating: Date;
 }
 
 export interface IItemSetDetails  {

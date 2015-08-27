@@ -1,6 +1,7 @@
 /// <reference path="../../typings/tsd.d.ts" />
 import Hapi = require('hapi');
 import Joi = require('joi');
+import Mongo = require('mongodb');
 import Database = require('../database/index');
 import IItemSetDetails = require('../database/collections/itemSetDetails.interface');
 
@@ -20,6 +21,48 @@ export function getRoutes(): Hapi.IRouteConfiguration[] {
                         userId: Joi.number().integer().optional(),
                         userName: Joi.string().optional()
                     }
+                },
+                auth: {
+                    mode: 'try',
+                    strategy: 'session'
+                },
+                plugins: {
+                    'hapi-auth-cookie': {
+                        redirectTo: false
+                    }
+                }
+            }
+        },
+        {
+            method: 'POST',
+            path: '/api/itemSetBuilds',
+            handler: itemSetBuildsHandler,
+            config: {
+                validate: {
+                    query: {
+                        championId: Joi.number().integer().optional(),
+                        userId: Joi.number().integer().optional(),
+                        userName: Joi.string().optional()
+                    },
+                    payload: {
+                        options: {
+                            limit: Joi.number().integer().optional(),
+                            skip: Joi.number().integer().optional(),
+                            sort: {
+                                field: Joi.string().optional(),
+                                direction: Joi.number().integer().optional()
+                            }
+                        }
+                    }
+                },
+                auth: {
+                    mode: 'try',
+                    strategy: 'session'
+                },
+                plugins: {
+                    'hapi-auth-cookie': {
+                        redirectTo: false
+                    }
                 }
             }
         },
@@ -32,6 +75,15 @@ export function getRoutes(): Hapi.IRouteConfiguration[] {
                     params: {
                         buildId: Joi.string()
                     }
+                },
+                auth: {
+                    mode: 'try',
+                    strategy: 'session'
+                },
+                plugins: {
+                    'hapi-auth-cookie': {
+                        redirectTo: false
+                    }
                 }
             }
         },
@@ -40,7 +92,6 @@ export function getRoutes(): Hapi.IRouteConfiguration[] {
             path: '/api/itemSetBuild',
             handler: insertItemSetHandler,
             config: {
-                auth: 'session',
                 validate: {
                     payload: {
                         itemSetDetails: {
@@ -56,6 +107,15 @@ export function getRoutes(): Hapi.IRouteConfiguration[] {
                             championName: Joi.string().required()
                         }
                     }
+                },
+                auth: {
+                    mode: 'try',
+                    strategy: 'session'
+                },
+                plugins: {
+                    'hapi-auth-cookie': {
+                        redirectTo: false
+                    }
                 }
             }
         },
@@ -64,7 +124,6 @@ export function getRoutes(): Hapi.IRouteConfiguration[] {
             path: '/api/itemSetBuild/{buildId}',
             handler: updateItemSetHandler,
             config: {
-                auth: 'session',
                 validate: {
                     params: {
                         buildId: Joi.string()
@@ -80,41 +139,87 @@ export function getRoutes(): Hapi.IRouteConfiguration[] {
                             blocks: Joi.array().optional()
                         }
                     }
+                },
+                auth: {
+                    mode: 'try',
+                    strategy: 'session'
+                },
+                plugins: {
+                    'hapi-auth-cookie': {
+                        redirectTo: false
+                    }
                 }
             }
-        }
+        },
+        {
+            method: 'GET',
+            path: '/api/itemSetBuild/{buildId}/comments',
+            handler: itemSetBuildCommentsHandler,
+            config: {
+                validate: {
+                    params: {
+                        buildId: Joi.string()
+                    },
+                    query: {
+                        sliceStart: Joi.number().integer().optional(),
+                        sliceLength: Joi.number().integer().optional()
+                    }
+                },
+                auth: {
+                    mode: 'try',
+                    strategy: 'session'
+                },
+                plugins: {
+                    'hapi-auth-cookie': {
+                        redirectTo: false
+                    }
+                }
+            }
+        },
     ];
     return routes;
 }
 
-function itemSetBuildHandler(request: Hapi.Request, reply: Hapi.IReply): void {
-    let queryOptions: IItemSetDetails.IQueryOptions = {
-        itemSetId: request.params['buildId']
-    };
-    db.itemSetDetails.getItemSetDetails(queryOptions).then(function(response: any): void {
+function itemSetBuildsHandler(request: Hapi.Request, reply: Hapi.IReply): void {
+    let requestor: string = null;
+    let query: any = {};
+    let options: any = {};
+    if (request.query) {
+        if (request.query.championId) {
+            query['champion.championId'] = request.query.championId;
+        }
+        if (request.query.userId) {
+            query['who.createdBy.userId'] = request.query.userId;
+        }
+        if (request.query.userName) {
+            query['who.createdBy.user'] = request.query.userName;
+        }
+    }
+    if (request.payload) {
+        options = request.payload.options;
+    }
+    if (request.auth && request.auth.credentials && request.auth.credentials.username) {
+        requestor = request.auth.credentials.username;
+    }
+    db.itemSetDetails.getItemSetDetails(query, null, options, requestor).then(function(response: any): void {
         reply(response);
     }).catch(function(error: any): void {
         reply(error);
     });
 }
 
-function itemSetBuildsHandler(request: Hapi.Request, reply: Hapi.IReply): void {
-    let queryOptions: IItemSetDetails.IQueryOptions = {};
-    if (request.query) {
-        if (request.query.championId) {
-            queryOptions.championId = request.query.championId;
-        }
-        if (request.query.userId) {
-            queryOptions.userId = request.query.userId;
-        }
-        if (request.query.userName) {
-            queryOptions.userName = request.query.userName;
-        }
-        if (false) {
-            // only get private item builds if they belong to the user
-        }
+function itemSetBuildHandler(request: Hapi.Request, reply: Hapi.IReply): void {
+    let requestor: string = null;
+    let query: any = {};
+    if (request.params) {
+        query = {
+            '_id': new Mongo.ObjectID(request.params['buildId'])
+        };
     }
-    db.itemSetDetails.getItemSetDetails(queryOptions).then(function(response: any): void {
+    if (request.auth && request.auth.credentials && request.auth.credentials.username) {
+        requestor = request.auth.credentials.username;
+    }
+    db.itemSetDetails.getItemSetDetails(query, null, null, requestor).then(function(response: any): void {
         reply(response);
     }).catch(function(error: any): void {
         reply(error);
@@ -153,6 +258,28 @@ function updateItemSetHandler(request: Hapi.Request, reply: Hapi.IReply): void {
     let user: string = request.auth.credentials.id;
 
     db.itemSetDetails.updateItemSetData(buildId, itemSetDetails, user).then(function(response: any): void {
+        reply(response);
+    }).catch(function(error: any): void {
+        reply(error);
+    });
+}
+
+function itemSetBuildCommentsHandler(request: Hapi.Request, reply: Hapi.IReply): void {
+    let query: any = {
+        '_id': new Mongo.ObjectID(request.params['buildId'])
+    };
+    let projection: any = null;
+    if (request.query) {
+        let startSlice: number = request.query.sliceStart || 0;
+        let sliceLength: number = request.query.sliceLength || 10;
+        projection = {
+            '_id': 1,
+            'comments': {
+                '$slice': [startSlice, (startSlice + sliceLength)]
+            }
+        };
+    }
+    db.itemSetDetails.getItemSetDetails(query, projection).then(function(response: any): void {
         reply(response);
     }).catch(function(error: any): void {
         reply(error);
