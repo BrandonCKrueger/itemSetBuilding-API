@@ -17,6 +17,7 @@ export function getRoutes(): Hapi.IRouteConfiguration[] {
             config: {
                 validate: {
                     query: {
+                        championName: Joi.string().optional(),
                         championId: Joi.number().integer().optional(),
                         userId: Joi.number().integer().optional(),
                         userName: Joi.string().optional()
@@ -40,6 +41,7 @@ export function getRoutes(): Hapi.IRouteConfiguration[] {
             config: {
                 validate: {
                     query: {
+                        championName: Joi.string().optional(),
                         championId: Joi.number().integer().optional(),
                         userId: Joi.number().integer().optional(),
                         userName: Joi.string().optional()
@@ -185,6 +187,9 @@ function itemSetBuildsHandler(request: Hapi.Request, reply: Hapi.IReply): void {
     let query: any = {};
     let options: any = {};
     if (request.query) {
+        if (request.query.championName) {
+            query['champion.championName'] = request.query.championName;
+        }
         if (request.query.championId) {
             query['champion.championId'] = request.query.championId;
         }
@@ -195,8 +200,19 @@ function itemSetBuildsHandler(request: Hapi.Request, reply: Hapi.IReply): void {
             query['who.createdBy.user'] = request.query.userName;
         }
     }
-    if (request.payload) {
-        options = request.payload.options;
+    if (request.payload && request.payload.options) {
+        if (request.payload.options.limit > 0) {
+            options['limit'] = request.payload.options.limit;
+        }
+        if (typeof request.payload.options.skip === 'number') {
+            options['skip'] = request.payload.options.skip;
+        }
+        if (request.payload.options.sort && request.payload.options.sort.field) {
+            if (request.payload.options.sort.direction === -1 || request.payload.options.sort.direction === 1) {
+                options['sort'] = {};
+                options['sort'][request.payload.options.sort.field] = request.payload.options.sort.direction;
+            }
+        }
     }
     if (request.auth && request.auth.credentials && request.auth.credentials.username) {
         requestor = request.auth.credentials.username;

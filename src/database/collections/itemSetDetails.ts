@@ -22,10 +22,12 @@ function getItemSetDetails(query: any, projection?: any, options?: IItemSetDetai
 					'itemSetDetails': 1,
 					'who': 1,
 					'champion': 1,
+					'role': 1,
 					'averageRating': 1,
 					'commentCount': 1,
 					'ratings': { $elemMatch: { user: requestor } },
-					'comments': { $elemMatch: { user: requestor } }
+					'comments': { $elemMatch: { user: requestor } },
+                	'authorNotes': 1
 				};
 			}
 			let results: any = db.itemSetDetails.find(query, projection);
