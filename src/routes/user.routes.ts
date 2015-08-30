@@ -81,16 +81,16 @@ function registerHandler(request: Hapi.Request, reply: Hapi.IReply): void {
         username: request.payload.username
     };
 
-    db.users.register(user).then(function(response: UserCollection.User): void {
+    db.users.register(user).then(function(response: any): void {
         let user: any = {
-            id: response._id,
-            username: response.username,
-            email: response.email
+            id: response.ops[0]._id,
+            username: response.ops[0].username,
+            email: response.ops[0].email
         };
         request.auth.session.set(user);
         reply(user);
     }).catch(function(error: any): void {
-        reply(error);
+        reply({error: error});
     });
 }
 

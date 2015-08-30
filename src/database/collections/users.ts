@@ -45,9 +45,9 @@ function validate(user: User): any {
 function register(user: User): any {
 	return new Promise(function(resolve: any, reject: any): any {
 		dbConnection.getConnection().then(function(db: any): void {
-			db.users.findOne({ email: user.email}).then(function(document: User): void {
+			db.users.findOne({ username: user.username}).then(function(document: User): void {
 				if (document) {
-					reject('There is already an account associated with that email');
+					reject('There is already an account associated with that summoner name');
 				} else {
 					Bcrypt.genSalt(10, function(saltError: any, salt: string): void {
 						Bcrypt.hash(user.password, salt, function(hashError: any, hashPassword: string): void {
