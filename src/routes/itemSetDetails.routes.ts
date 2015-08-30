@@ -19,7 +19,7 @@ export function getRoutes(): Hapi.IRouteConfiguration[] {
                     query: {
                         championName: Joi.string().optional(),
                         championId: Joi.number().integer().optional(),
-                        userId: Joi.number().integer().optional(),
+                        userId: Joi.string().optional(),
                         userName: Joi.string().optional()
                     }
                 },
@@ -102,12 +102,15 @@ export function getRoutes(): Hapi.IRouteConfiguration[] {
                             map: Joi.string().required(),
                             mode: Joi.string().required(),
                             priority: Joi.boolean().required(),
-                            sortrank: Joi.number().required()
+                            sortrank: Joi.number().required(),
+                            blocks: Joi.any().optional()
                         },
                         champion: {
                             championId: Joi.number().required(),
                             championName: Joi.string().required()
-                        }
+                        },
+                        role: Joi.string().required(),
+                        authorNotes: Joi.string().allow('').optional()
                     }
                 },
                 auth: {
@@ -138,8 +141,14 @@ export function getRoutes(): Hapi.IRouteConfiguration[] {
                             mode: Joi.string().required(),
                             priority: Joi.boolean().required(),
                             sortrank: Joi.number().required(),
-                            blocks: Joi.array().optional()
-                        }
+                            blocks: Joi.any().optional()
+                        },
+                        champion: {
+                            championId: Joi.number().required(),
+                            championName: Joi.string().required()
+                        },
+                        role: Joi.string().required(),
+                        authorNotes: Joi.string().allow('').optional()
                     }
                 },
                 auth: {
@@ -261,7 +270,11 @@ function insertItemSetHandler(request: Hapi.Request, reply: Hapi.IReply): void {
         };
 
         db.itemSetDetails.insertItemSetData(itemSetData).then(function(response: any): void {
-            reply(response);
+            if (response && response.ops && response.ops[0]) {
+                reply(response.ops[0]);
+            } else {
+                reply('An error occured while creating item set');
+            }
         }).catch(function(error: any): void {
             reply(error);
         });
@@ -271,9 +284,11 @@ function insertItemSetHandler(request: Hapi.Request, reply: Hapi.IReply): void {
 function updateItemSetHandler(request: Hapi.Request, reply: Hapi.IReply): void {
     let buildId: string = request.params['buildId'];
     let itemSetDetails: IItemSetDetails.IItemSetDetails = request.payload.itemSetDetails;
+    let role: string = request.payload.role;
+    let authorNotes: string = request.payload.authorNotes;
     let user: string = request.auth.credentials.id;
 
-    db.itemSetDetails.updateItemSetData(buildId, itemSetDetails, user).then(function(response: any): void {
+    db.itemSetDetails.updateItemSetData(buildId, itemSetDetails, role, authorNotes, user).then(function(response: any): void {
         reply(response);
     }).catch(function(error: any): void {
         reply(error);

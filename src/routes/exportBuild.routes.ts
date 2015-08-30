@@ -1,6 +1,7 @@
 /// <reference path="../../typings/tsd.d.ts" />
 import Hapi = require('hapi');
 import Joi = require('joi');
+import Mongo = require('mongodb');
 import Database = require('../database/index');
 import IItemSetDetails = require('../database/collections/itemSetDetails.interface');
 
@@ -18,15 +19,6 @@ export function getRoutes(): Hapi.IRouteConfiguration[] {
                     params: {
                         buildId: Joi.string()
                     }
-                },
-                auth: {
-                    mode: 'try',
-                    strategy: 'session'
-                },
-                plugins: {
-                    'hapi-auth-cookie': {
-                        redirectTo: false
-                    }
                 }
             }
         }
@@ -36,10 +28,13 @@ export function getRoutes(): Hapi.IRouteConfiguration[] {
 
 // private functions
 function exportBuildHandler(request: Hapi.Request, reply: Hapi.IReply): void {
-    let queryOptions: IItemSetDetails.IQueryOptions = {
-        itemSetId: request.params['buildId']
-    };
-    db.itemSetDetails.getItemSetDetails(queryOptions).then(function(result: any): void {
+    let query: any = {};
+    if (request.params) {
+        query = {
+            '_id': new Mongo.ObjectID(request.params['buildId'])
+        };
+    }
+    db.itemSetDetails.getItemSetDetails(query).then(function(result: any): void {
         let outputData: IItemSetDetails.IItemSetDetails = {
             title: result[0].itemSetDetails.title,
             type: result[0].itemSetDetails.type,

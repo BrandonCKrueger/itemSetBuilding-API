@@ -17,6 +17,8 @@ export interface IItemSetData {
 	ratings?: IItemSetDataSocialRatings[];
 	commentCount?: number;
 	comments?: IItemSetDataSocialComments[];
+	role: string;
+	authorNotes: string;
 }
 
 export interface IItemSetDataChampion {
