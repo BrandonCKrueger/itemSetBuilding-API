@@ -10,7 +10,7 @@ let server: Hapi.Server = new Hapi.Server();
 // adding a new connection that can be listened on
 server.connection({
   port: process.env.PORT || 3000,
-  host: 'localhost',
+  host: process.env.HOST || 'localhost',
   labels: ['web'],
   routes: {
     cors: {
