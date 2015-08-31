@@ -69,3 +69,100 @@ Returns: Item Set Build with ID equal to buildId
 * Unit tests code quality is maintained with the help of [ESLint](http://eslint.org/)
 * To run unit tests: `mocha "tests/**/*.spec.js"`
 * Unit test coverage is currently pathetically low, but there are some unit tests to build on as an example
+
+### Database Scheme
+---
+##### Collection: Users
+```
+{
+    "_id": {
+        "$oid": "55e4ab56839762232386b89f"
+    },
+    "email": "brandon.c.krueger@gmail.com",
+    "password": "[BCrypt salted & hashed password]",
+    "username": "BKrueger"
+}
+```
+
+##### Collection: ItemSetDetails
+```
+{
+    "_id": {
+        "$oid": "55dd46b4e4b0c6f3b9fc4003"
+    },
+    "itemSetDetails": {
+        "title": "Annie's Secret Weapon",
+        "type": "custom",
+        "map": "any",
+        "mode": "any",
+        "priority": false,
+        "sortrank": 0,
+        "blocks": [
+            {
+                "type": "CINDERHULKS",
+                "recMath": true,
+                "minSummonerLevel": -1,
+                "maxSummonerLevel": -1,
+                "showIfSummonerSpell": "",
+                "hideIfSummonerSpell": "",
+                "items": [
+                    {
+                        "id": "3725",
+                        "count": 1
+                    },
+                    {
+                        "id": "3725",
+                        "count": 1
+                    },
+                    {
+                        "id": "3725",
+                        "count": 1
+                    }
+                ]
+            }
+        ]
+    },
+    "who": {
+        "lastEdit": {
+            "$date": "2015-08-31T04:34:12.706Z"
+        },
+        "createdDate": "Tue Aug 25 2015 23:49:40 GMT-0500 (CDT)",
+        "createdBy": {
+            "userId": "55e4ab56839762232386b89f",
+            "user": "BKrueger"
+        },
+        "public": true
+    },
+    "champion": {
+        "championId": 1,
+        "championName": "Annie"
+    },
+    "role": "Mid Lane",
+    "averageRating": 4.5,
+    "ratings": [
+        {
+            "user": "UserAccount1",
+            "rating": 4.5
+        }
+    ],
+    "commentCount": 3,
+    "comments": [
+        {
+            "user": "UserAccount1",
+            "createdDate": "Tue Aug 25 2015 23:49:40 GMT-0500 (CDT)",
+            "comment": "Genius"
+        },
+        {
+            "user": "UserAccount2",
+            "createdDate": "Tue Aug 25 2015 23:49:40 GMT-0500 (CDT)",
+            "comment": "Brilliant"
+        },
+        {
+            "user": "UserAccount3",
+            "createdDate": "Tue Aug 25 2015 23:49:40 GMT-0500 (CDT)",
+            "comment": "This is Korean level meta good"
+        }
+    ],
+    "authorNotes": "Trust in the master, 3 Cinderhulks on Annie and the enemy team will cry for mercy"
+}
+```
