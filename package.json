@@ -2,7 +2,7 @@
   "name": "RiotItemSetChallenege",
   "version": "1.0.0",
   "description": "The backend for Riot API challenege #2",
-  "main": "dest/app/server.js",
+  "main": "dest/server.js",
   "scripts": {
     "start": "node dest/server.js",
     "test": "gulp mocha",

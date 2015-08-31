@@ -44,7 +44,9 @@ function exportBuildHandler(request: Hapi.Request, reply: Hapi.IReply): void {
             sortrank: result[0].itemSetDetails.sortrank,
             blocks: result[0].itemSetDetails.blocks
         };
-        reply(outputData).header('Content-disposition', 'attachment');
+        reply(outputData)
+            .header('Content-disposition', 'attachment')
+            .type('application/json');
     }).catch(function(error: any): void {
         reply(error);
     });
