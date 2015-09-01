@@ -63,7 +63,7 @@ function insertItemSetData(itemSetData: IItemSetDetails.IItemSetData): any {
     });
 }
 
-function updateItemSetData(buildId: string, itemSetDetails: IItemSetDetails.IItemSetDetails, role: string, authorNotes: string, userId: string): any {
+function updateItemSetData(buildId: string, itemSetDetails: IItemSetDetails.IItemSetDetails, role: string, authorNotes: string, userId: string, isPublic: boolean): any {
 	return new Promise(function(resolve: any, reject: any): any {
         dbConnection.getConnection().then(function(db: any): void {
 			db.itemSetDetails.findOne({'_id': new Mongo.ObjectID(buildId)}).then(function(result: IItemSetDetails.IItemSetData): void {
@@ -75,6 +75,7 @@ function updateItemSetData(buildId: string, itemSetDetails: IItemSetDetails.IIte
 						result.role = role;
 						result.authorNotes = authorNotes;
 						result.who.lastEdit = new Date();
+						result.who.public = isPublic;
 
 						db.itemSetDetails.save(result, {w: 1}, function(updateError: any, record: IItemSetDetails.IItemSetData): void {
 							if (updateError) {

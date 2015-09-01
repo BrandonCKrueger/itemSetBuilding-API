@@ -110,7 +110,10 @@ export function getRoutes(): Hapi.IRouteConfiguration[] {
                             championName: Joi.string().required()
                         },
                         role: Joi.string().required(),
-                        authorNotes: Joi.string().allow('').optional()
+                        authorNotes: Joi.string().allow('').optional(),
+                        who: {
+                            public: Joi.boolean().required()
+                        }
                     }
                 },
                 auth: {
@@ -148,7 +151,10 @@ export function getRoutes(): Hapi.IRouteConfiguration[] {
                             championName: Joi.string().required()
                         },
                         role: Joi.string().required(),
-                        authorNotes: Joi.string().allow('').optional()
+                        authorNotes: Joi.string().allow('').optional(),
+                        who: {
+                            public: Joi.boolean().required()
+                        }
                     }
                 },
                 auth: {
@@ -258,6 +264,8 @@ function insertItemSetHandler(request: Hapi.Request, reply: Hapi.IReply): void {
         let itemSetData: IItemSetDetails.IItemSetData = {
             itemSetDetails: request.payload.itemSetDetails,
             champion: request.payload.champion,
+            role: request.payload.role,
+            authorNotes: request.payload.authorNotes,
             who: {
                 lastEdit: new Date(),
                 createdDate: new Date(),
@@ -265,7 +273,7 @@ function insertItemSetHandler(request: Hapi.Request, reply: Hapi.IReply): void {
                     userId: request.auth.credentials.id,
                     user: request.auth.credentials.username
                 },
-                public: false
+                public: request.payload.who.public
             }
         };
 
@@ -287,8 +295,9 @@ function updateItemSetHandler(request: Hapi.Request, reply: Hapi.IReply): void {
     let role: string = request.payload.role;
     let authorNotes: string = request.payload.authorNotes;
     let user: string = request.auth.credentials.id;
+    let isPublic: boolean = request.payload.who.public;
 
-    db.itemSetDetails.updateItemSetData(buildId, itemSetDetails, role, authorNotes, user).then(function(response: any): void {
+    db.itemSetDetails.updateItemSetData(buildId, itemSetDetails, role, authorNotes, user, isPublic).then(function(response: any): void {
         reply(response);
     }).catch(function(error: any): void {
         reply(error);
